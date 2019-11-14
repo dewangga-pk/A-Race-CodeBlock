@@ -11,8 +11,12 @@
 void *font = GLUT_BITMAP_HELVETICA_18;
 void *font2 = GLUT_BITMAP_TIMES_ROMAN_24;
 int xx = 120;
-double xxx,yyy,gerak;
+double musuh = 120;
+double musuh1 = 120;
+int health = 3;
+double xxx,yyy,gerak,musuh2,musuh3,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
 int hitungscore,posisi3,posisi4;
+int respawn =6;
 int tinggi1 = 90;
 int tinggi2 =120;
 int arr[4] = {0,20,40,60};
@@ -20,8 +24,10 @@ int posisi1 = rand() % 4;
 int posisi2 = rand() % 4;
 int score = 0;
 int timer = 0;
-bool check = false;
-int mousenya1,mousenya2;
+int menux,menuy;
+bool checkmenu = false;
+bool collision = false;
+bool checkgame = false;
 
 ///Helvetica
 void tulis(int x, int y, char *string) {
@@ -41,8 +47,8 @@ void tulis2(int x, int y, char *string) {
     }
 }
 void tombolStart(int posisix,int posisiy){
-    mousenya1=posisix;
-    mousenya2=posisiy;
+    menux=posisix;
+    menuy=posisiy;
     glBegin(GL_QUADS);
         glColor3ub(52,235,58);
         glVertex2f(posisix,posisiy);
@@ -57,7 +63,7 @@ void tombolStart(int posisix,int posisiy){
 }
 void menu(void){
     glClear(GL_COLOR_BUFFER_BIT);
-    tombolStart(50,50);
+    tombolStart(45,60);
     glFlush();
 }
 void nama(){
@@ -262,7 +268,7 @@ void mobilpolisi(){
 }
 void objectmobil(){
     glPushMatrix();
-        glTranslated(10.0,tinggi2,0);//90
+        glTranslated(10.0,90,0);//90
         glScaled(1.5,1,0);
         glBegin(GL_POLYGON);
         glColor3f(0.0, 1.0, 0.0);
@@ -619,7 +625,7 @@ void objectmobil(){
 }
 void mobilmusuh(){
     glPushMatrix();
-    glTranslated(10.0,tinggi1,0.0);//120
+    glTranslated(10.0,0.0,0.0);//120
     glScaled(1.5,1,0);
     glBegin(GL_POLYGON);
         glColor3f(1.0, 0.0, 0.0);
@@ -974,65 +980,139 @@ void mobilmusuh(){
     glEnd();
     glPopMatrix();
 }
-void myKeyboard(unsigned char key,int x,int y){
+void kotakCollision(){
+    glPushMatrix();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glBegin(GL_QUADS);
+        glColor4f(0.0,0.0,0.0,1);
+        glVertex2f(24.5,2.4);
+        glVertex2f(24.5,13.8);
+        glVertex2f(35.5,13.8);
+        glVertex2f(35.5,2.4);
+    glEnd();
+    glPopMatrix();
+}
+void kotakCollisionmusuh(){
+    glPushMatrix();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glBegin(GL_QUADS);
+        glColor4f(0.0,0.0,0.0,1);
+        glVertex2f(25.35,6);
+        glVertex2f(25.35,22.12);
+        glVertex2f(36.7,22.12);
+        glVertex2f(36.7,6);
+    glEnd();
+    glPopMatrix();
+}
+void myKeyboard(int key,int x,int y){
     switch(key){
-    case'w':
+    case GLUT_KEY_UP:
         if(yyy>100){
             yyy+=0;
         }else{
             yyy+=2.0;
         }
+        printf("%f yUp\n",yyy+13.8);
+        printf("%f yDown\n",yyy+2.4);
         break;
-    case'd':
+    case GLUT_KEY_RIGHT:
         if(xxx>60){
             xxx +=0;
         }else{
             xxx += 2.0;
         }
+        printf("%f xleft\n",xxx+24.5);
+        printf("%f xright\n",xxx+35.5);
         break;
-    case'a':
+    case GLUT_KEY_LEFT:
         if(xxx<0){
             xxx -=0;
         }else{
             xxx -= 2.0;
         }
+        printf("%f xleft\n",xxx+24.5);
+        printf("%f xright\n",xxx+35.5);
         break;
-    case's':
+    case GLUT_KEY_DOWN:
         if(yyy<0){
             yyy-=0;
         }else{
             yyy-=2.0;
         }
+        printf("%f yUp\n",yyy+13.8);
+        printf("%f yDown\n",yyy+2.4);
         break;
     }
     glutPostRedisplay();
 }
+void glCollision(){
+    if(collision==true){
+        health=health-1;
+    }
+}
 void myTimeOut(int id){
     hitungscore++;
+    musuh=musuh-1.5;
     if((hitungscore%10)==0){
         score++;
+        if(respawn<6){
+            respawn++;
+            if(respawn==6){collision=false;}
+        }
     }
     gerak-=1.5;
     if(gerak<-210){
        gerak=0;
-       posisi1 = rand() % 4;
-       posisi2 = rand() % 4;
-       posisi3 = rand() % 4;
-       tinggi1 = rand() % 100 + 150;
-       tinggi2 = rand() % 100 + 150;
-       if(posisi1==posisi2){
-            if((tinggi1-tinggi2)<0 && (tinggi1-tinggi2)>=-20){
-                tinggi2+=30;
-            }else if((tinggi2-tinggi1)<0 && (tinggi2-tinggi1)>=-20){
-                tinggi2+=30;
-            }
-       }
-
     }
+
+    if(musuh<=-30){
+       posisi1 = rand() % 4;
+       musuh = rand() % 120 + 150;
+    }
+    if(musuh1<=-30){
+        posisi2 = rand() % 4;
+        musuh1 = rand()  % 120 + 150;
+    }
+
+    avxLeft = 24.5 + xxx;
+    avxRight = 35.5 + xxx;
+    avyDown = 2.4 + yyy;
+    avyUp = 13.8 +yyy;
+
+    mhxLeft = 25.35 + arr[posisi1];
+    mhxRight = 36.7 + arr[posisi1];
+    mhyUp = 22.12 + musuh;
+    mhyDown = 6 +musuh;
+    if(collision==false && respawn%6==0){
+    if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
+    }
+    //printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
+    if(health==0)checkgame=false;
     glutPostRedisplay();
-    glutTimerFunc(1, myTimeOut, 0); // request next timer event
+    if(checkgame==true)glutTimerFunc(1, myTimeOut, 0); // request next timer event
 }
 void scoredisplay (int posx, int posy, int posz, int space_char, int scorevar){
+        int j=0,p,k;
+        GLvoid *font_style1 = GLUT_BITMAP_TIMES_ROMAN_24;
+
+        p = scorevar;
+        j = 0;
+        k = 0;
+        while(p > 9)
+        {
+            k = p % 10;
+            glRasterPos3f ((posx-(j*space_char)),posy, posz);
+            glutBitmapCharacter(font_style1,48+k);
+            j++;
+            p /= 10;
+        }
+            glRasterPos3f ((posx-(j*space_char)), posy, posz);
+            glutBitmapCharacter(font_style1,48+p);
+
+}
+void nyawa(int posx, int posy, int posz, int space_char, int scorevar){
         int j=0,p,k;
         GLvoid *font_style1 = GLUT_BITMAP_TIMES_ROMAN_24;
 
@@ -1063,56 +1143,55 @@ void display(void){
         marka();
     glPopMatrix();
     glPushMatrix();
-        glTranslated(arr[posisi1],gerak,0.0);
+        glTranslated(arr[posisi1],musuh,0.0);
+        kotakCollisionmusuh();
         mobilmusuh();
     glPopMatrix();
-    glPushMatrix();
-        glTranslated(arr[posisi2],gerak,0.0);
-        objectmobil();
-    glPopMatrix();
-    if(score>20){
-        glPushMatrix();
-        glTranslated(arr[posisi3],gerak,0.0);
-            objectmobil();
-        glPopMatrix();
-    }
+    //glPushMatrix();
+       // glTranslated(arr[posisi2],musuh1,0.0);
+      //  mobilmusuh();
+    //glPopMatrix();
     glPushMatrix();
         glTranslated(xxx,yyy,0.0);
+        kotakCollision();
         mobilpolisi();
     glPopMatrix();
     scoredisplay(117,117,0,3,score);
+    nyawa(2,117,0,3,health);
     glFlush();
 }
 void mouse(int button, int state, int mousex, int mousey){
-    tombolStart(30,30);
     int width, height;
     width  = glutGet(GLUT_WINDOW_WIDTH);
     height = glutGet(GLUT_WINDOW_HEIGHT);
     int x; int y;
-    if(button==GLUT_LEFT_BUTTON && state==GLUT_ENTERED && mousenya1>=(2*mousex/(width/mousenya1)-mousenya1) && mousenya2>=-(2*mousey/(height/mousenya2)-mousenya2)  ){
-        glutDisplayFunc(display);
-        check=true;
+    if(checkmenu==false){
+        if(button==GLUT_LEFT_BUTTON && state==GLUT_ENTERED && ((mousex/5)>=menux && (mousex/5)<=menux+30) && (-((mousey-720)/6)>=menuy && -((mousey-720)/6)<=menuy+11)){
+            glutDisplayFunc(display);
+            glutTimerFunc(1,myTimeOut,0);
+            checkmenu = true;
+            checkgame= true;
+        }
     }
     printf(" \n");
     printf("%i width\n", width);
-    printf("%i height\n", mousey);
-    printf("%i mouse x\n", (2*mousex/(width/mousenya1)-mousenya1));
-    printf("%i mouse y\n", -(2*mousey/(height/mousenya2)-mousenya2));
+    printf("%i height\n", height);
+    printf("%i mouse x\n", mousex);
+    printf("%i mouse y\n", mousey);
+    printf("%i mouse x baru\n", mousex/5);
+    printf("%i mouse y baru\n", -(mousey-720)/6);
     glutPostRedisplay();
 }
 int main(int argc,char**argv){
     glutInit(&argc,argv);
-    glutInitWindowSize(500,700);
+    glutInitWindowSize(600,720);
     glutInitWindowPosition(500,80);
     glutCreateWindow("Car Game");
     glutDisplayFunc(menu);
     glutMouseFunc(mouse);
-    glutKeyboardFunc(myKeyboard);
+    glutSpecialFunc(myKeyboard);
     gluOrtho2D(0,xx,0,xx);
     glClearColor(1,1,1,1);//Warna Background
-    if(check=true){
-     glutTimerFunc(1, myTimeOut, 0);
-    }
-    //glutTimerFunc(1000,waktu,0);
+    glutTimerFunc(1, 0, 0);
     glutMainLoop();
 }
