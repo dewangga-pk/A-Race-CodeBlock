@@ -10,11 +10,13 @@
 
 void *font = GLUT_BITMAP_HELVETICA_18;
 void *font2 = GLUT_BITMAP_TIMES_ROMAN_24;
+void *font3 = GLUT_BITMAP_HELVETICA_12;
 int xx = 120;
 double musuh = 120;
-double musuh1 = 120;
+double musuh2 = 120;
 int health = 3;
-double xxx,yyy,gerak,musuh2,musuh3,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
+double xxx,yyy,gerak,musuh3,musuh4,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
+double mhxLeft2,mhxRight2,mhyUp2,mhyDown2;
 int hitungscore,posisi3,posisi4;
 int respawn =6;
 int tinggi1 = 90;
@@ -37,7 +39,13 @@ void tulis(int x, int y, char *string) {
         glutBitmapCharacter(font, string[i]);
     }
 }
-
+void tulis3(int x, int y, char *string) {
+    glRasterPos2f(x, y);
+    int len = (int) strlen(string);
+    for (int i = 0; i < len; i++) {
+        glutBitmapCharacter(font3, string[i]);
+    }
+}
 ///TimesRoman
 void tulis2(int x, int y, char *string) {
     glRasterPos2f(x, y);
@@ -45,30 +53,6 @@ void tulis2(int x, int y, char *string) {
     for (int i = 0; i < len; i++) {
         glutBitmapCharacter(font2, string[i]);
     }
-}
-void tombolStart(int posisix,int posisiy){
-    menux=posisix;
-    menuy=posisiy;
-    glBegin(GL_QUADS);
-        glColor3ub(52,235,58);
-        glVertex2f(posisix,posisiy);
-        glVertex2f(posisix,posisiy+11);
-        glVertex2f(posisix+30,posisiy+11);
-        glVertex2f(posisix+30,posisiy);
-    glEnd();
-    glPushMatrix();
-        glColor3ub(0,0,0);
-        tulis2(posisix+6,posisiy+4,"START");
-    glPopMatrix();
-}
-void menu(void){
-    glClear(GL_COLOR_BUFFER_BIT);
-    tombolStart(45,60);
-    glFlush();
-}
-void nama(){
-    glColor3b(0,0,0);
-    tulis2(0,90,"TESTING");
 }
 void grass(){
     int jumlah = xx;
@@ -155,6 +139,7 @@ void marka(){
     }
 }
 void mobilpolisi(){
+    glColor3f(1.0,1.0,1.0);
     glPushMatrix();
     glScaled(2.5,1.5,0.0);
     glTranslated(5.0,-1.0,0.0);
@@ -985,7 +970,7 @@ void kotakCollision(){
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_QUADS);
-        glColor4f(0.0,0.0,0.0,1);
+        glColor4f(0.0,0.0,0.0,0.0);
         glVertex2f(24.5,2.4);
         glVertex2f(24.5,13.8);
         glVertex2f(35.5,13.8);
@@ -998,7 +983,7 @@ void kotakCollisionmusuh(){
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBegin(GL_QUADS);
-        glColor4f(0.0,0.0,0.0,1);
+        glColor4f(0.0,0.0,0.0,0.0);
         glVertex2f(25.35,6);
         glVertex2f(25.35,22.12);
         glVertex2f(36.7,22.12);
@@ -1006,7 +991,72 @@ void kotakCollisionmusuh(){
     glEnd();
     glPopMatrix();
 }
+void scoreboard(){
+    glPushMatrix();
+        glBegin(GL_QUADS);
+            glColor3f(1.0,1.0,1.0);
+            glVertex2f(30,80);
+            glVertex2f(90,80);
+            glVertex2f(90,40);
+            glVertex2f(30,40);
+        glEnd();
+        glBegin(GL_LINES);
+            glColor3f(0.0,0.0,0.0);
+            glVertex2f(40,70);
+            glVertex2f(80,70);
+        glEnd();
+        tulis(48,73,"GAME OVER");
+        tulis3(40,62,"Score : ");
+        glBegin(GL_LINES);
+            glColor3f(0.0,0.0,0.0);
+            glVertex2f(40,55);
+            glVertex2f(80,55);
+        glEnd();
+        tulis3(44,50,"THANK YOU FOR PLAYING");
+    glPopMatrix();
+}
+void iconhealth(){
+    int jaraknya = 3;
+    int kiri = 1;
+    int kanan = 4;
+    int atas = 119;
+    int bawah = 115;
+    for(int i=0;i<health;i++){
+        glPushMatrix();
+        glBegin(GL_QUADS);
+            glColor3ub(250, 17, 0);
+            glVertex2f(kiri,atas);
+            glVertex2f(kanan,atas);
+            glVertex2f(kanan,bawah);
+            glVertex2f(kiri,bawah);
+        glEnd();
+        glPopMatrix();
+        kiri+=4;
+        kanan+=4;
+    }
+}
+void tombolStart(int posisix,int posisiy){
+    menux=posisix;
+    menuy=posisiy;
+    glBegin(GL_QUADS);
+        glColor3ub(52,235,58);
+        glVertex2f(posisix,posisiy);
+        glVertex2f(posisix,posisiy+11);
+        glVertex2f(posisix+30,posisiy+11);
+        glVertex2f(posisix+30,posisiy);
+    glEnd();
+    glPushMatrix();
+        glColor3ub(0,0,0);
+        tulis2(posisix+6,posisiy+4,"START");
+    glPopMatrix();
+}
+void menu(void){
+    glClear(GL_COLOR_BUFFER_BIT);
+    tombolStart(45,60);
+    glFlush();
+}
 void myKeyboard(int key,int x,int y){
+    if(checkgame==true){
     switch(key){
     case GLUT_KEY_UP:
         if(yyy>100){
@@ -1046,6 +1096,7 @@ void myKeyboard(int key,int x,int y){
         break;
     }
     glutPostRedisplay();
+    }
 }
 void glCollision(){
     if(collision==true){
@@ -1055,6 +1106,7 @@ void glCollision(){
 void myTimeOut(int id){
     hitungscore++;
     musuh=musuh-1.5;
+    musuh2=musuh2-1.5;
     if((hitungscore%10)==0){
         score++;
         if(respawn<6){
@@ -1071,9 +1123,9 @@ void myTimeOut(int id){
        posisi1 = rand() % 4;
        musuh = rand() % 120 + 150;
     }
-    if(musuh1<=-30){
+    if(musuh2<=-30){
         posisi2 = rand() % 4;
-        musuh1 = rand()  % 120 + 150;
+        musuh2 = rand()  % 120 + 150;
     }
 
     avxLeft = 24.5 + xxx;
@@ -1085,8 +1137,15 @@ void myTimeOut(int id){
     mhxRight = 36.7 + arr[posisi1];
     mhyUp = 22.12 + musuh;
     mhyDown = 6 +musuh;
+
+    mhxLeft2 = 25.35 + arr[posisi2];
+    mhxRight2 = 36.7 + arr[posisi2];
+    mhyUp2 = 22.12 + musuh2;
+    mhyDown2 = 6 +musuh2;
+
     if(collision==false && respawn%6==0){
     if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
+    else if(((avxLeft<=mhxRight2 && avxLeft>=mhxLeft2)|| (avxRight>=mhxLeft2 && avxRight<=mhxRight2)) && ((avyUp>=mhyDown2 && avyUp<=mhyUp2 ) || (avyDown<=mhyUp2 && avyDown>=mhyDown2)) ) {collision=true;glCollision();respawn=0;}
     }
     //printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
     if(health==0)checkgame=false;
@@ -1132,7 +1191,7 @@ void nyawa(int posx, int posy, int posz, int space_char, int scorevar){
 
 }
 void display(void){
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DOUBLEBUFFER);
     glPushMatrix();
         glTranslated(0.0,gerak,0.0);
         grass();
@@ -1143,21 +1202,39 @@ void display(void){
         marka();
     glPopMatrix();
     glPushMatrix();
+        if(respawn<6 && respawn%2!=0){
+
+        }else{
+            iconhealth();
+        }
+    glPopMatrix();
+    glPushMatrix();
         glTranslated(arr[posisi1],musuh,0.0);
         kotakCollisionmusuh();
         mobilmusuh();
     glPopMatrix();
-    //glPushMatrix();
-       // glTranslated(arr[posisi2],musuh1,0.0);
-      //  mobilmusuh();
-    //glPopMatrix();
+    glPushMatrix();
+        glTranslated(arr[posisi2],musuh2,0.0);
+        kotakCollisionmusuh();
+        mobilmusuh();
+    glPopMatrix();
     glPushMatrix();
         glTranslated(xxx,yyy,0.0);
         kotakCollision();
-        mobilpolisi();
+        if(respawn<6 && respawn%2!=0){
+
+        }else{
+            mobilpolisi();
+        }
     glPopMatrix();
-    scoredisplay(117,117,0,3,score);
-    nyawa(2,117,0,3,health);
+    if(checkgame==true){
+        scoredisplay(117,117,0,3,score);
+        //nyawa(2,117,0,3,health);
+    }
+    if(checkgame == false){
+        scoreboard();
+        scoredisplay(72,61,0,3,score);
+    }
     glFlush();
 }
 void mouse(int button, int state, int mousex, int mousey){
