@@ -15,7 +15,6 @@ double musuh = 120;
 double musuh2 = 120;
 int health = 3;
 double xxx,yyy,gerak,musuh3,musuh4,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
-double mhxLeft2,mhxRight2,mhyUp2,mhyDown2;
 int hitungscore,posisi3,posisi4;
 int respawn =6;
 int tinggi1 = 90;
@@ -1112,6 +1111,18 @@ void glCollision(){
         health=health-1;
     }
 }
+void glCollisionAvatar(float posisinyax,float posisinyay){
+    avxLeft = 24.5 + xxx;
+    avxRight = 35.5 + xxx;
+    avyDown = 2.4 + yyy;
+    avyUp = 13.8 +yyy;
+}
+void glCollisionEnemy(float posisinya,float xmusuh){
+    mhxLeft = 25.35 + posisinya;
+    mhxRight = 36.7 + posisinya;
+    mhyUp = 22.12 + xmusuh;
+    mhyDown = 6 + xmusuh;
+}
 void myTimeOut(int id){
     hitungscore++;
     musuh=musuh-1.5;
@@ -1137,26 +1148,16 @@ void myTimeOut(int id){
         musuh2 = rand()  % 120 + 150;
     }
 
-    avxLeft = 24.5 + xxx;
-    avxRight = 35.5 + xxx;
-    avyDown = 2.4 + yyy;
-    avyUp = 13.8 +yyy;
-
-    mhxLeft = 25.35 + arr[posisi1];
-    mhxRight = 36.7 + arr[posisi1];
-    mhyUp = 22.12 + musuh;
-    mhyDown = 6 +musuh;
-
-    mhxLeft2 = 25.35 + arr[posisi2];
-    mhxRight2 = 36.7 + arr[posisi2];
-    mhyUp2 = 22.12 + musuh2;
-    mhyDown2 = 6 +musuh2;
+    glCollisionAvatar(xxx,yyy);
 
     if(collision==false && respawn%6==0){
+        glCollisionEnemy(arr[posisi1],musuh);
     if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
-    else if(((avxLeft<=mhxRight2 && avxLeft>=mhxLeft2)|| (avxRight>=mhxLeft2 && avxRight<=mhxRight2)) && ((avyUp>=mhyDown2 && avyUp<=mhyUp2 ) || (avyDown<=mhyUp2 && avyDown>=mhyDown2)) ) {collision=true;glCollision();respawn=0;}
+    //else if(((avxLeft<=mhxRight2 && avxLeft>=mhxLeft2)|| (avxRight>=mhxLeft2 && avxRight<=mhxRight2)) && ((avyUp>=mhyDown2 && avyUp<=mhyUp2 ) || (avyDown<=mhyUp2 && avyDown>=mhyDown2)) ) {collision=true;glCollision();respawn=0;}
+        glCollisionEnemy(arr[posisi2],musuh2);
+    if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
     }
-    //printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
+    printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
     if(health==0)checkgame=false;
     glutPostRedisplay();
     if(checkgame==true)glutTimerFunc(1, myTimeOut, 0); // request next timer event
@@ -1255,6 +1256,8 @@ void mouse(int button, int state, int mousex, int mousey){
         if(button==GLUT_LEFT_BUTTON && state==GLUT_ENTERED && ((mousex/5)>=menux && (mousex/5)<=menux+30) && (-((mousey-720)/6)>=menuy && -((mousey-720)/6)<=menuy+11)){
             glutDisplayFunc(display);
             glutTimerFunc(1,myTimeOut,0);
+            score=0;
+            health=3;
             checkmenu = true;
             checkgame= true;
         }
