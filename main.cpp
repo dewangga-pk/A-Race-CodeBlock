@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include<stdio.h>
 
-
 void *font = GLUT_BITMAP_HELVETICA_18;
 void *font2 = GLUT_BITMAP_TIMES_ROMAN_24;
 void *font3 = GLUT_BITMAP_HELVETICA_12;
@@ -1052,7 +1051,7 @@ void tombolStart(int posisix,int posisiy){
 }
 void menu(void){
     glClear(GL_COLOR_BUFFER_BIT);
-    tombolStart(45,60);
+    tombolStart(45,60);//45,60
     glFlush();
 }
 void myKeyboard(int key,int x,int y){
@@ -1098,6 +1097,16 @@ void myKeyboard(int key,int x,int y){
     glutPostRedisplay();
     }
 }
+//Untuk menunya
+void xkeyboard(unsigned char keyx,int x,int y){
+    switch(keyx){
+    case 13 :
+         yyy+=10;
+         break;
+    }
+    glutPostRedisplay();
+}
+//Untuk Menunya
 void glCollision(){
     if(collision==true){
         health=health-1;
@@ -1267,6 +1276,7 @@ int main(int argc,char**argv){
     glutDisplayFunc(menu);
     glutMouseFunc(mouse);
     glutSpecialFunc(myKeyboard);
+    //glutKeyboardFunc(xkeyboard);
     gluOrtho2D(0,xx,0,xx);
     glClearColor(1,1,1,1);//Warna Background
     glutTimerFunc(1, 0, 0);
