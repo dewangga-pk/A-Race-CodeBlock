@@ -11,17 +11,15 @@ void *font = GLUT_BITMAP_HELVETICA_18;
 void *font2 = GLUT_BITMAP_TIMES_ROMAN_24;
 void *font3 = GLUT_BITMAP_HELVETICA_12;
 int xx = 120;
-double musuh = 120;
-double musuh2 = 120;
 int health = 3;
-double xxx,yyy,gerak,musuh3,musuh4,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
-int hitungscore,posisi3,posisi4;
+double xxx,yyy,gerak,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
+int posisi1 = rand() % 4,posisi2 = rand() % 4,posisi3= rand() % 4,posisi4 = rand() % 4,posisi5 = rand() % 4;
+double musuh = 120,musuh2 = 120,musuh3 = 120,musuh4 = 120,musuh5 = 120;
+int hitungscore;
 int respawn =6;
 int tinggi1 = 90;
 int tinggi2 =120;
 int arr[4] = {0,20,40,60};
-int posisi1 = rand() % 4;
-int posisi2 = rand() % 4;
 int score = 0;
 int timer = 0;
 int menux,menuy;
@@ -251,7 +249,7 @@ void mobilpolisi(){
 }
 void objectmobil(){
     glPushMatrix();
-        glTranslated(10.0,90,0);//90
+        glTranslated(10.0,0,0);//90
         glScaled(1.5,1,0);
         glBegin(GL_POLYGON);
         glColor3f(0.0, 1.0, 0.0);
@@ -1127,6 +1125,7 @@ void myTimeOut(int id){
     hitungscore++;
     musuh=musuh-1.5;
     musuh2=musuh2-1.5;
+    musuh3=musuh3-1.5;
     if((hitungscore%10)==0){
         score++;
         if(respawn<6){
@@ -1147,6 +1146,18 @@ void myTimeOut(int id){
         posisi2 = rand() % 4;
         musuh2 = rand()  % 120 + 150;
     }
+    if(musuh3<=-30){
+        posisi3 = rand() % 4;
+        musuh3 = rand()  % 120 + 150;
+    }
+    if(musuh4<=-300){
+        posisi4 = rand() % 4;
+        musuh4 = rand() % 120 +150;
+    }
+    if(musuh5<=-300){
+        posisi5 = rand() % 4;
+        musuh5 = rand() % 120 +150;
+    }
 
     glCollisionAvatar(xxx,yyy);
 
@@ -1156,6 +1167,12 @@ void myTimeOut(int id){
     //else if(((avxLeft<=mhxRight2 && avxLeft>=mhxLeft2)|| (avxRight>=mhxLeft2 && avxRight<=mhxRight2)) && ((avyUp>=mhyDown2 && avyUp<=mhyUp2 ) || (avyDown<=mhyUp2 && avyDown>=mhyDown2)) ) {collision=true;glCollision();respawn=0;}
         glCollisionEnemy(arr[posisi2],musuh2);
     if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
+        if(score>=30){
+            glCollisionEnemy(arr[posisi3],musuh3);
+            if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
+            glCollisionEnemy(arr[posisi4],musuh4);
+            if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
+        }
     }
     printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
     if(health==0)checkgame=false;
@@ -1228,6 +1245,12 @@ void display(void){
         kotakCollisionmusuh();
         mobilmusuh();
     glPopMatrix();
+    if(score>30){
+            glPushMatrix();
+            glTranslated(arr[posisi3],musuh3,0.0);
+            objectmobil();
+            glPopMatrix();
+    }
     glPushMatrix();
         glTranslated(xxx,yyy,0.0);
         kotakCollision();
