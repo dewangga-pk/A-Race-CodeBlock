@@ -1253,7 +1253,7 @@ void display(void){
     }
     glPushMatrix();
         glTranslated(xxx,yyy,0.0);
-        kotakCollision();
+        //kotakCollision();
         if(respawn<6 && respawn%2!=0){
 
         }else{
