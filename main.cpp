@@ -6,27 +6,36 @@
 #endif
 #include <stdlib.h>
 #include<stdio.h>
-
+//Font
 void *font = GLUT_BITMAP_HELVETICA_18;
 void *font2 = GLUT_BITMAP_TIMES_ROMAN_24;
 void *font3 = GLUT_BITMAP_HELVETICA_12;
+//Ortho
 int xx = 120;
 int health = 3;
+//Collision
 double xxx,yyy,gerak,avyUp,avyDown,avxLeft,avxRight,mhxLeft,mhxRight,mhyUp,mhyDown;
+//Position
+int arr[4] = {0,20,40,60};
 int posisi1 = rand() % 4,posisi2 = rand() % 4,posisi3= rand() % 4,posisi4 = rand() % 4,posisi5 = rand() % 4;
 double musuh = 120,musuh2 = 120,musuh3 = 120,musuh4 = 120,musuh5 = 120;
+//Score,Respawn
 int hitungscore;
 int respawn =6;
 int tinggi1 = 90;
 int tinggi2 =120;
-int arr[4] = {0,20,40,60};
 int score = 0;
 int timer = 0;
+//Orhto Menu
 int menux,menuy;
+//CheckGameFunctionTest
+bool help = false;
 bool checkmenu = false;
 bool collision = false;
 bool checkgame = false;
-
+//MenuCheck
+int menuu=1;
+double menutrans=0.0;
 ///Helvetica
 void tulis(int x, int y, char *string) {
     glRasterPos2f(x, y);
@@ -50,6 +59,7 @@ void tulis2(int x, int y, char *string) {
         glutBitmapCharacter(font2, string[i]);
     }
 }
+//Asset
 void grass(){
     int jumlah = xx;
     int x=0;
@@ -987,6 +997,7 @@ void kotakCollisionmusuh(){
     glEnd();
     glPopMatrix();
 }
+//KotakScore dan Nyawa
 void scoreboard(){
     glPushMatrix();
         glBegin(GL_QUADS);
@@ -1031,7 +1042,8 @@ void iconhealth(){
         kanan+=4;
     }
 }
-void tombolStart(int posisix,int posisiy){
+//GambarMenu
+void tombolStart(int posisix,int posisiy,char *string){
     menux=posisix;
     menuy=posisiy;
     glBegin(GL_QUADS);
@@ -1043,26 +1055,54 @@ void tombolStart(int posisix,int posisiy){
     glEnd();
     glPushMatrix();
         glColor3ub(0,0,0);
-        tulis2(posisix+6,posisiy+4,"START");
+        tulis2(posisix+6,posisiy+4,string);
     glPopMatrix();
 }
-void menu(void){
-    glClear(GL_COLOR_BUFFER_BIT);
-    tombolStart(45,60);//45,60
-    glFlush();
+void selector(){
+    glPushMatrix();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glTranslated(0.0,menutrans,0);
+        glBegin(GL_QUADS);
+            glColor4f(0.0,0.0,0.0,0.2);
+            glVertex2f(menux-2,menuy);
+            glVertex2f(menux-2,menuy+11);
+            glVertex2f(menux+33,menuy+11);
+            glVertex2f(menux+33,menuy);
+        glEnd();
+    glPopMatrix();
 }
+void bantuan(){
+    glPushMatrix();
+        glBegin(GL_QUADS);
+            glColor3ub(163, 173, 166);
+            glVertex2f(30,80);
+            glVertex2f(90,80);
+            glVertex2f(90,40);
+            glVertex2f(30,40);
+        glEnd();
+        glBegin(GL_LINES);
+            glColor3f(0.0,0.0,0.0);
+            glVertex2f(40,70);
+            glVertex2f(80,70);
+        glEnd();
+        tulis(40,73,"TUTORIAL GAME");
+        //tulis3(40,62,"Score : ");
+        glBegin(GL_LINES);
+            glColor3f(0.0,0.0,0.0);
+            glVertex2f(40,55);
+            glVertex2f(80,55);
+        glEnd();
+        tulis3(40,64,"Gunakan tombol kiri dan kanan untuk");
+        tulis3(40,62,"menghindari mobil lain,diberikan 3");
+        tulis3(40,60,"kesempatan atau toleransi kesalahan");
+        tulis3(40,50,"Tekan ESCAPE untuk kembali");
+    glPopMatrix();
+}
+//FunctionKeyboard
 void myKeyboard(int key,int x,int y){
     if(checkgame==true){
     switch(key){
-    case GLUT_KEY_UP:
-        if(yyy>100){
-            yyy+=0;
-        }else{
-            yyy+=2.0;
-        }
-        printf("%f yUp\n",yyy+13.8);
-        printf("%f yDown\n",yyy+2.4);
-        break;
     case GLUT_KEY_RIGHT:
         if(xxx>60){
             xxx +=0;
@@ -1081,29 +1121,22 @@ void myKeyboard(int key,int x,int y){
         printf("%f xleft\n",xxx+24.5);
         printf("%f xright\n",xxx+35.5);
         break;
+    }
+    }else{
+    switch(key){
     case GLUT_KEY_DOWN:
-        if(yyy<0){
-            yyy-=0;
-        }else{
-            yyy-=2.0;
-        }
-        printf("%f yUp\n",yyy+13.8);
-        printf("%f yDown\n",yyy+2.4);
+        if(menuu==3)return;
+        else{menutrans-=12;menuu++;}
+        break;
+    case GLUT_KEY_UP:
+        if(menuu==1)return;
+        else {menutrans+=12;menuu--;}
         break;
     }
-    glutPostRedisplay();
-    }
-}
-//Untuk menunya
-void xkeyboard(unsigned char keyx,int x,int y){
-    switch(keyx){
-    case 13 :
-         yyy+=10;
-         break;
     }
     glutPostRedisplay();
 }
-//Untuk Menunya
+//FunctionCollision
 void glCollision(){
     if(collision==true){
         health=health-1;
@@ -1121,11 +1154,42 @@ void glCollisionEnemy(float posisinya,float xmusuh){
     mhyUp = 22.12 + xmusuh;
     mhyDown = 6 + xmusuh;
 }
+//FunctionTimer
 void myTimeOut(int id){
+    int a;
+    if(score<30){
+        a = 30;
+        musuh-=1.5;
+        musuh2-=1.5;
+        musuh3-=1.5;
+        gerak-=1.5;
+    }
+    else if(score<80){
+        a=20;
+        musuh-=1.5*1.5;
+        musuh2-=1.5*1.5;
+        musuh3-=1.5*1.5;
+        gerak-=1.5*1.5;
+    }
+    else if(score<500){
+        a=10;
+        musuh-=1.5*2;
+        musuh2-=1.5*2;
+        musuh3-=1.5*2;
+        gerak-=1.5*2;
+    }
+    else{
+        a=1;
+        musuh-=1.5*5;
+        musuh2-=1.5*5;
+        musuh3-=1.5*5;
+        gerak-=1.5*5;
+    }
     hitungscore++;
-    musuh=musuh-1.5;
-    musuh2=musuh2-1.5;
-    musuh3=musuh3-1.5;
+    if(gerak<-210){
+       gerak=0;
+    }
+
     if((hitungscore%10)==0){
         score++;
         if(respawn<6){
@@ -1133,11 +1197,6 @@ void myTimeOut(int id){
             if(respawn==6){collision=false;}
         }
     }
-    gerak-=1.5;
-    if(gerak<-210){
-       gerak=0;
-    }
-
     if(musuh<=-30){
        posisi1 = rand() % 4;
        musuh = rand() % 120 + 150;
@@ -1174,11 +1233,12 @@ void myTimeOut(int id){
             if(((avxLeft<=mhxRight && avxLeft>=mhxLeft)|| (avxRight>=mhxLeft && avxRight<=mhxRight)) && ((avyUp>=mhyDown && avyUp<=mhyUp) || (avyDown<=mhyUp && avyDown>=mhyDown)) ) {collision=true;glCollision();respawn=0;}
         }
     }
-    printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
+    //printf("%f xLeftMusuh\n",25.35+arr[posisi1]);
     if(health==0)checkgame=false;
     glutPostRedisplay();
-    if(checkgame==true)glutTimerFunc(1, myTimeOut, 0); // request next timer event
+    if(checkgame==true)glutTimerFunc(a, myTimeOut, 0); // request next timer event
 }
+//FunctionScoreDisplay
 void scoredisplay (int posx, int posy, int posz, int space_char, int scorevar){
         int j=0,p,k;
         GLvoid *font_style1 = GLUT_BITMAP_TIMES_ROMAN_24;
@@ -1198,6 +1258,7 @@ void scoredisplay (int posx, int posy, int posz, int space_char, int scorevar){
             glutBitmapCharacter(font_style1,48+p);
 
 }
+//CodeScore
 void nyawa(int posx, int posy, int posz, int space_char, int scorevar){
         int j=0,p,k;
         GLvoid *font_style1 = GLUT_BITMAP_TIMES_ROMAN_24;
@@ -1217,6 +1278,19 @@ void nyawa(int posx, int posy, int posz, int space_char, int scorevar){
             glutBitmapCharacter(font_style1,48+p);
 
 }
+//MenuDisplay
+void menu(void){
+    glClear(GL_COLOR_BUFFER_BIT);
+    tombolStart(45,36,"EXIT");
+    tombolStart(45,48,"HELP");
+    tombolStart(45,60,"START");
+    selector();
+    if(help){
+        bantuan();
+    }
+    glFlush();
+}
+//MainGameDisplay
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT|GL_DOUBLEBUFFER);
     glPushMatrix();
@@ -1270,6 +1344,30 @@ void display(void){
     }
     glFlush();
 }
+//Mouse and Keyboard Menu Controller
+void xkeyboard(unsigned char keyx,int x,int y){
+    if(checkmenu==false){
+    switch(keyx){
+    case 13 :
+         if(menuu==1){
+            glutDisplayFunc(display);
+            glutTimerFunc(1,myTimeOut,0);
+            score=0;
+            health=3;
+            checkmenu = true;
+            checkgame= true;
+         }else if(menuu==2){
+            help=true;
+         }
+         else exit(0);
+         break;
+    }
+    if(help){
+        if(keyx==27)help=false;
+    }
+    }
+    glutPostRedisplay();
+}
 void mouse(int button, int state, int mousex, int mousey){
     int width, height;
     width  = glutGet(GLUT_WINDOW_WIDTH);
@@ -1294,6 +1392,7 @@ void mouse(int button, int state, int mousex, int mousey){
     printf("%i mouse y baru\n", -(mousey-720)/6);
     glutPostRedisplay();
 }
+//MainFunction
 int main(int argc,char**argv){
     glutInit(&argc,argv);
     glutInitWindowSize(600,720);
@@ -1302,7 +1401,7 @@ int main(int argc,char**argv){
     glutDisplayFunc(menu);
     glutMouseFunc(mouse);
     glutSpecialFunc(myKeyboard);
-    //glutKeyboardFunc(xkeyboard);
+    glutKeyboardFunc(xkeyboard);
     gluOrtho2D(0,xx,0,xx);
     glClearColor(1,1,1,1);//Warna Background
     glutTimerFunc(1, 0, 0);
